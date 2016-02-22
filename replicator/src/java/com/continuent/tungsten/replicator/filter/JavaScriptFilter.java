@@ -185,10 +185,32 @@ public class JavaScriptFilter implements FilterManualProperties
         // Create script's scope.
         scope = jsContext.initStandardObjects();
 
-        // Compile user's JavaScript files for future usage, so they wouldn't
-        // require compilation on every filtered event.
+        String coreutilssrc = properties.getString("replicator.filter.coreutils");
+
+        // Import the standard JS utility script first
         try
         {
+            // Read and compile the core script functions
+            BufferedReader inbase = new BufferedReader(new FileReader(coreutilssrc));
+            script = jsContext.compileReader(inbase, scriptFile, 0, null);
+            inbase.close();
+
+            script.exec(jsContext, scope);
+        }
+        catch (IOException e)
+        {
+            throw new ReplicatorException("Core utility library file not found: "
+                    + coreutilssrc, e);
+        }
+        catch (EvaluatorException e)
+        {
+            throw new ReplicatorException(e);
+        }
+
+        // Compile user's JavaScript files for future usage, so they wouldn't
+        // require compilation on every filtered event.
+        try {
+
             // Read and compile the script.
             BufferedReader in = new BufferedReader(new FileReader(scriptFile));
             script = jsContext.compileReader(in, scriptFile, 0, null);
@@ -196,6 +218,7 @@ public class JavaScriptFilter implements FilterManualProperties
 
             // Execute script to get functions into scope.
             script.exec(jsContext, scope);
+
 
             // Provide access to the logger object.
             ScriptableObject.putProperty(scope, "logger", logger);
