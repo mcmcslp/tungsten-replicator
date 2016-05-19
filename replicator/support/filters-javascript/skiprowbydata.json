@@ -1,0 +1,21 @@
+{
+    'test' : 
+    {
+        'msg' : 
+        {
+            'msg' : [
+                'hello','^skip.*','me'
+            ],
+            
+            'test' : [
+                'Nothing'
+            ]
+        },
+        'othertable' : 
+        {
+            'msg' : [
+                'hello','skip','me'
+            ]
+        }
+    }
+}   
