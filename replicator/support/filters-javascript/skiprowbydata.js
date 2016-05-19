@@ -130,7 +130,16 @@ function skiprowdata(event, d)
                     logger.debug("      SRBD: Starting ROW Data loop: " + row);
 
                     values = columnValues.get(row);
-                    value = new java.lang.String(values.get(c).getValue(), charset);
+
+		    if (values.get(c).getValue() === null) {
+			continue;
+		    }
+		    
+		    if (charset === null) {
+			value = new java.lang.String(values.get(c).getValue());
+		    } else {
+			value = new java.lang.String(values.get(c).getValue(), charset);
+		    }
 
                     logger.debug("      SRBD: checking value: " + value);
                     logger.debug("      SRBD: row value: " + j);
@@ -150,10 +159,11 @@ function skiprowdata(event, d)
                             logger.debug("        SRBD: row value: " + row);
 
                             logger.info("skiprowbydata: removing row due to a regex match of '" + rowbydata[stc][vr] + "' in column " + table + '.' + columnname );
-							rowChanges.remove(j);
+                            
+                            rowChanges.remove(j);
                             skipme = 1;
-							break;
-
+                            break;
+                            
                             columnValues.remove(row);
                             row--;
                         }
